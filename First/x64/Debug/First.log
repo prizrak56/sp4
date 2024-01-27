@@ -1,6 +1,0 @@
-﻿  main.cpp
-  request_queue.cpp
-  search_server.cpp
-  Создание кода...
-main.obj : error LNK2019: ссылка на неразрешенный внешний символ "public: __cdecl SearchServer::SearchServer<char [10]>(char const (&)[10])" (??$?0$$BY09D@SearchServer@@QEAA@AEAY09$$CBD@Z) в функции main.
-F:\sp4_git\sp4\x64\Debug\First.exe : fatal error LNK1120: неразрешенных внешних элементов: 1

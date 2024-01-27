@@ -5,64 +5,34 @@
 template <typename Iterator>
 class Paginator {
 public:
-    Paginator(Iterator begin, Iterator end, size_t page_size) : begin_(begin), end_(end), page_size_(page_size) {
+    Paginator(Iterator begin, Iterator end, size_t page_size) {
+        for (size_t left = distance(begin, end); left > 0;) {
+            const size_t current_page_size = min(page_size, left);
+            const Iterator current_page_end = next(begin, current_page_size);
+            pages_.push_back({ begin, current_page_end });
 
-
-        size_p = distance(begin, end);
-        if (size_p % page_size != 0) {
-            size_p = size_p / page_size;
-            size_p += 1;
+            left -= current_page_size;
+            begin = current_page_end;
         }
-        else {
-            size_p = size_p / page_size;
-        }
-
-        docsort_.resize(size_p);
-        while (begin != end) {
-
-            alldoc_.push_back(*begin);
-            ++begin;
-
-        }
-
-
     }
 
-    auto Sort() {
-        int x = 0;
-        int lists = 0;
-        int convert_pageS = static_cast<int>(page_size_);
-        for (int i = 0; i < alldoc_.size(); i++) {
-            if (x < convert_pageS) {
-                docsort_[lists].insert(docsort_[lists].begin() + x, alldoc_[i]);
-                ++x;
-            }
-            if (x == convert_pageS) {
-                x = 0;
-                lists += 1;
-            }
-        }
-        return docsort_;
+    auto begin() const {
+        return pages_.begin();
     }
 
-    auto GetAllDoc() {
-        return alldoc_;
+    auto end() const {
+        return pages_.end();
     }
 
-
+    size_t size() const {
+        return pages_.size();
+    }
 
 private:
-    int size_p = 0;
-    Document last;
-    std::vector<Document> alldoc_;
-    std::vector<std::vector<Document>> docsort_;
-    Iterator begin_, end_;
-    size_t page_size_ = 0, page_count_ = 0;
+    vector<IteratorRange<Iterator>> pages_;
 };
 
 template <typename Container>
 auto Paginate(const Container& c, size_t page_size) {
-    Paginator ret = Paginator(c.begin(), c.end(), page_size);
-
-    return ret.Sort();
+    return Paginator(begin(c), end(c), page_size);
 }
