@@ -3,20 +3,6 @@
 
 using namespace std::literals::string_literals;
 
-template <typename Iterator>
-std::ostream& operator<<(std::ostream& out, const Document& range) {
-    out << "{ document_id = " << range.id << ", relevance = "s << range.relevance << ", rating = "s << range.rating << " }"s;
-    return out;
-}
-
-template <typename Iterator>
-std::ostream& operator<<(std::ostream& out, const IteratorRange<Iterator>& range) {
-    for (Iterator it = range.begin(); it != range.end(); ++it) {
-        out << *it;
-    }
-    return out;
-}
-
 int main() {
     SearchServer search_server("and in at"s);
     RequestQueue request_queue(search_server);
