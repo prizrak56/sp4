@@ -1,17 +1,8 @@
-#include "search_server.h"
+п»ї#include "search_server.h"
 #include <algorithm>
 
 
-template<typename StringContainer>
-SearchServer::SearchServer(const StringContainer& stop_words) : stop_words_(MakeUniqueNonEmptyStrings(stop_words))  
-{
-    if (!all_of(stop_words_.begin(), stop_words_.end(), IsValidWord)) {
-        throw std::invalid_argument("Some of stop words are invalid");
-    }
-}
-
-
-SearchServer::SearchServer(const std::string& stop_words_text) : SearchServer(SplitIntoWords(stop_words_text)){}
+SearchServer::SearchServer(const std::string& stop_words_text) : SearchServer(SplitIntoWords(stop_words_text)) {}
 
 void SearchServer::AddDocument(int document_id, const std::string& document, DocumentStatus status, const std::vector<int>& ratings)
 {
@@ -35,7 +26,7 @@ inline std::vector<Document> SearchServer::FindTopDocuments(const std::string& r
 
     auto matched_documents = FindAllDocuments(query, document_predicate);
 
-    // Сортируем документы по релевантности и рейтингу
+    // Г‘Г®Г°ГІГЁГ°ГіГҐГ¬ Г¤Г®ГЄГіГ¬ГҐГ­ГІГ» ГЇГ® Г°ГҐГ«ГҐГўГ Г­ГІГ­Г®Г±ГІГЁ ГЁ Г°ГҐГ©ГІГЁГ­ГЈГі
     sort(matched_documents.begin(), matched_documents.end(),
         [](const Document& lhs, const Document& rhs) {
             if (std::abs(lhs.relevance - rhs.relevance) < 1e-6) {
@@ -54,7 +45,7 @@ inline std::vector<Document> SearchServer::FindTopDocuments(const std::string& r
 
 std::vector<Document> SearchServer::FindTopDocuments(const std::string& raw_query, DocumentStatus status) const
 {
-    return FindTopDocuments(raw_query, [status](int document_id, DocumentStatus document_status, int rating) {return document_status == status;});
+    return FindTopDocuments(raw_query, [status](int document_id, DocumentStatus document_status, int rating) {return document_status == status; });
 }
 
 std::vector<Document> SearchServer::FindTopDocuments(const std::string& raw_query) const
@@ -209,8 +200,3 @@ std::vector<Document> SearchServer::FindAllDocuments(const Query& query, Documen
     }
     return matched_documents;
 }
-
-
-
-
-

@@ -4,5 +4,4 @@
 
 std::string ReadLine();
 
-// Функция для чтения числа из строки
 int ReadLineWithNumber();

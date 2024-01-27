@@ -1,8 +1,9 @@
-#pragma once
+п»ї#pragma once
 #include "document.h"
 #include "string_processing.h"
 #include <map>
 #include <vector>
+#include <algorithm>
 
 const int MAX_RESULT_DOCUMENT_COUNT = 5;
 
@@ -10,35 +11,40 @@ class SearchServer {
 public:
 
     template <typename StringContainer>
-    explicit SearchServer(const StringContainer& stop_words);
+    explicit SearchServer(const StringContainer& stop_words) : stop_words_(MakeUniqueNonEmptyStrings(stop_words))
+    {
+        if (!all_of(stop_words_.begin(), stop_words_.end(), IsValidWord)) {
+            throw std::invalid_argument("Some of stop words are invalid");
+        }
+    }
 
-    // Конструктор, принимающий текст стоп-слов
+    // ГЉГ®Г­Г±ГІГ°ГіГЄГІГ®Г°, ГЇГ°ГЁГ­ГЁГ¬Г ГѕГ№ГЁГ© ГІГҐГЄГ±ГІ Г±ГІГ®ГЇ-Г±Г«Г®Гў
     explicit SearchServer(const std::string& stop_words_text);
 
-    // Метод для добавления документа
-    void AddDocument(int document_id, const std::string& document, DocumentStatus status,const std::vector<int>& ratings);
+    // ГЊГҐГІГ®Г¤ Г¤Г«Гї Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГї Г¤Г®ГЄГіГ¬ГҐГ­ГІГ 
+    void AddDocument(int document_id, const std::string& document, DocumentStatus status, const std::vector<int>& ratings);
 
-    // Шаблонный метод для поиска документов по запросу
+    // ГГ ГЎГ«Г®Г­Г­Г»Г© Г¬ГҐГІГ®Г¤ Г¤Г«Гї ГЇГ®ГЁГ±ГЄГ  Г¤Г®ГЄГіГ¬ГҐГ­ГІГ®Гў ГЇГ® Г§Г ГЇГ°Г®Г±Гі
     template <typename DocumentPredicate>
-    std::vector<Document> FindTopDocuments(const std::string& raw_query,DocumentPredicate document_predicate) const;
+    std::vector<Document> FindTopDocuments(const std::string& raw_query, DocumentPredicate document_predicate) const;
 
-    // Метод для поиска документов по запросу и статусу
+    // ГЊГҐГІГ®Г¤ Г¤Г«Гї ГЇГ®ГЁГ±ГЄГ  Г¤Г®ГЄГіГ¬ГҐГ­ГІГ®Гў ГЇГ® Г§Г ГЇГ°Г®Г±Гі ГЁ Г±ГІГ ГІГіГ±Гі
     std::vector<Document> FindTopDocuments(const std::string& raw_query, DocumentStatus status) const;
 
-    // Метод для поиска документов по запросу с учетом статуса ACTUAL
+    // ГЊГҐГІГ®Г¤ Г¤Г«Гї ГЇГ®ГЁГ±ГЄГ  Г¤Г®ГЄГіГ¬ГҐГ­ГІГ®Гў ГЇГ® Г§Г ГЇГ°Г®Г±Гі Г± ГіГ·ГҐГІГ®Г¬ Г±ГІГ ГІГіГ±Г  ACTUAL
     std::vector<Document> FindTopDocuments(const std::string& raw_query) const;
 
-    // Метод для получения общего количества документов
+    // ГЊГҐГІГ®Г¤ Г¤Г«Гї ГЇГ®Г«ГіГ·ГҐГ­ГЁГї Г®ГЎГ№ГҐГЈГ® ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ  Г¤Г®ГЄГіГ¬ГҐГ­ГІГ®Гў
     size_t GetDocumentCount() const;
 
-    // Метод для получения идентификатора документа по индексу
+    // ГЊГҐГІГ®Г¤ Г¤Г«Гї ГЇГ®Г«ГіГ·ГҐГ­ГЁГї ГЁГ¤ГҐГ­ГІГЁГґГЁГЄГ ГІГ®Г°Г  Г¤Г®ГЄГіГ¬ГҐГ­ГІГ  ГЇГ® ГЁГ­Г¤ГҐГЄГ±Гі
     int GetDocumentId(int index) const;
 
-    // Метод для поиска совпадений слов в запросе для указанного документа
-    std::tuple<std::vector<std::string>, DocumentStatus> MatchDocument(const std::string& raw_query,int document_id) const;
+    // ГЊГҐГІГ®Г¤ Г¤Г«Гї ГЇГ®ГЁГ±ГЄГ  Г±Г®ГўГЇГ Г¤ГҐГ­ГЁГ© Г±Г«Г®Гў Гў Г§Г ГЇГ°Г®Г±ГҐ Г¤Г«Гї ГіГЄГ Г§Г Г­Г­Г®ГЈГ® Г¤Г®ГЄГіГ¬ГҐГ­ГІГ 
+    std::tuple<std::vector<std::string>, DocumentStatus> MatchDocument(const std::string& raw_query, int document_id) const;
 
 private:
-    // Структура данных для хранения информации о документе
+    // Г‘ГІГ°ГіГЄГІГіГ°Г  Г¤Г Г­Г­Г»Гµ Г¤Г«Гї ГµГ°Г Г­ГҐГ­ГЁГї ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГЁ Г® Г¤Г®ГЄГіГ¬ГҐГ­ГІГҐ
     struct DocumentData {
         int rating;
         DocumentStatus status;
@@ -48,41 +54,41 @@ private:
     std::map<int, DocumentData> documents_;
     std::vector<int> document_ids_;
 
-    // Метод для проверки, является ли слово стоп-словом
+    // ГЊГҐГІГ®Г¤ Г¤Г«Гї ГЇГ°Г®ГўГҐГ°ГЄГЁ, ГїГўГ«ГїГҐГІГ±Гї Г«ГЁ Г±Г«Г®ГўГ® Г±ГІГ®ГЇ-Г±Г«Г®ГўГ®Г¬
     bool IsStopWord(const std::string& word) const;
 
-    // Проверка, является ли слово допустимым (не содержит спецсимволов)
+    // ГЏГ°Г®ГўГҐГ°ГЄГ , ГїГўГ«ГїГҐГІГ±Гї Г«ГЁ Г±Г«Г®ГўГ® Г¤Г®ГЇГіГ±ГІГЁГ¬Г»Г¬ (Г­ГҐ Г±Г®Г¤ГҐГ°Г¦ГЁГІ Г±ГЇГҐГ¶Г±ГЁГ¬ГўГ®Г«Г®Гў)
     static bool IsValidWord(const std::string& word);
 
-    // Разделение текста на слова, исключая стоп-слова и проверяя их допустимость
+    // ГђГ Г§Г¤ГҐГ«ГҐГ­ГЁГҐ ГІГҐГЄГ±ГІГ  Г­Г  Г±Г«Г®ГўГ , ГЁГ±ГЄГ«ГѕГ·Г Гї Г±ГІГ®ГЇ-Г±Г«Г®ГўГ  ГЁ ГЇГ°Г®ГўГҐГ°ГїГї ГЁГµ Г¤Г®ГЇГіГ±ГІГЁГ¬Г®Г±ГІГј
     std::vector<std::string> SplitIntoWordsNoStop(const std::string& text) const;
 
-    // Вычисление среднего рейтинга по вектору рейтингов
+    // Г‚Г»Г·ГЁГ±Г«ГҐГ­ГЁГҐ Г±Г°ГҐГ¤Г­ГҐГЈГ® Г°ГҐГ©ГІГЁГ­ГЈГ  ГЇГ® ГўГҐГЄГІГ®Г°Гі Г°ГҐГ©ГІГЁГ­ГЈГ®Гў
     static int ComputeAverageRating(const std::vector<int>& ratings);
 
-    // Структура для представления слова из запроса
+    // Г‘ГІГ°ГіГЄГІГіГ°Г  Г¤Г«Гї ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГї Г±Г«Г®ГўГ  ГЁГ§ Г§Г ГЇГ°Г®Г±Г 
     struct QueryWord {
         std::string data;
         bool is_minus;
         bool is_stop;
     };
 
-    // Анализ слова из запроса
+    // ГЂГ­Г Г«ГЁГ§ Г±Г«Г®ГўГ  ГЁГ§ Г§Г ГЇГ°Г®Г±Г 
     QueryWord ParseQueryWord(const std::string& text) const;
 
-    // Структура для представления запроса
+    // Г‘ГІГ°ГіГЄГІГіГ°Г  Г¤Г«Гї ГЇГ°ГҐГ¤Г±ГІГ ГўГ«ГҐГ­ГЁГї Г§Г ГЇГ°Г®Г±Г 
     struct Query {
         std::set<std::string> plus_words;
         std::set<std::string> minus_words;
     };
-    // Анализ запроса
+    // ГЂГ­Г Г«ГЁГ§ Г§Г ГЇГ°Г®Г±Г 
     Query ParseQuery(const std::string& text) const;
 
-    // Вычисление обратной частоты документов для слова
+    // Г‚Г»Г·ГЁГ±Г«ГҐГ­ГЁГҐ Г®ГЎГ°Г ГІГ­Г®Г© Г·Г Г±ГІГ®ГІГ» Г¤Г®ГЄГіГ¬ГҐГ­ГІГ®Гў Г¤Г«Гї Г±Г«Г®ГўГ 
     double ComputeWordInverseDocumentFreq(const std::string& word) const;
 
-    // Поиск всех документов, соответствующих запросу с учетом предиката
+    // ГЏГ®ГЁГ±ГЄ ГўГ±ГҐГµ Г¤Г®ГЄГіГ¬ГҐГ­ГІГ®Гў, Г±Г®Г®ГІГўГҐГІГ±ГІГўГіГѕГ№ГЁГµ Г§Г ГЇГ°Г®Г±Гі Г± ГіГ·ГҐГІГ®Г¬ ГЇГ°ГҐГ¤ГЁГЄГ ГІГ 
     template <typename DocumentPredicate>
     std::vector<Document> FindAllDocuments(const Query& query, DocumentPredicate document_predicate) const;
-    
+
 };

@@ -1,4 +1,4 @@
-#include "request_queue.h"
+п»ї#include "request_queue.h"
 
 std::ostream& operator << (std::ostream& os, const std::vector<Document>& obj) {
 
@@ -18,15 +18,15 @@ int main() {
     search_server.AddDocument(3, "big cat fancy collar ", DocumentStatus::ACTUAL, { 1, 2, 8 });
     search_server.AddDocument(4, "big dog sparrow Eugene", DocumentStatus::ACTUAL, { 1, 3, 2 });
     search_server.AddDocument(5, "big dog sparrow Vasiliy", DocumentStatus::ACTUAL, { 1, 1, 1 });
-    // 1439 запросов с нулевым результатом
+    // 1439 Г§Г ГЇГ°Г®Г±Г®Гў Г± Г­ГіГ«ГҐГўГ»Г¬ Г°ГҐГ§ГіГ«ГјГІГ ГІГ®Г¬
     for (int i = 0; i < 1439; ++i) {
         request_queue.AddFindRequest("empty request");
     }
-    // все еще 1439 запросов с нулевым результатом
+    // ГўГ±ГҐ ГҐГ№ГҐ 1439 Г§Г ГЇГ°Г®Г±Г®Гў Г± Г­ГіГ«ГҐГўГ»Г¬ Г°ГҐГ§ГіГ«ГјГІГ ГІГ®Г¬
     request_queue.AddFindRequest("curly dog");
-    // новые сутки, первый запрос удален, 1438 запросов с нулевым результатом
+    // Г­Г®ГўГ»ГҐ Г±ГіГІГЄГЁ, ГЇГҐГ°ГўГ»Г© Г§Г ГЇГ°Г®Г± ГіГ¤Г Г«ГҐГ­, 1438 Г§Г ГЇГ°Г®Г±Г®Гў Г± Г­ГіГ«ГҐГўГ»Г¬ Г°ГҐГ§ГіГ«ГјГІГ ГІГ®Г¬
     request_queue.AddFindRequest("big collar");
-    // первый запрос удален, 1437 запросов с нулевым результатом
+    // ГЇГҐГ°ГўГ»Г© Г§Г ГЇГ°Г®Г± ГіГ¤Г Г«ГҐГ­, 1437 Г§Г ГЇГ°Г®Г±Г®Гў Г± Г­ГіГ«ГҐГўГ»Г¬ Г°ГҐГ§ГіГ«ГјГІГ ГІГ®Г¬
     request_queue.AddFindRequest("sparrow");
     std::cout << "Total empty requests: " << request_queue.GetNoResultRequests() << std::endl;
     return 0;

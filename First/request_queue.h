@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "search_server.h"
 #include <deque>
 
@@ -7,7 +7,7 @@ public:
 
     explicit RequestQueue(const SearchServer& search_server);
 
-    // сделаем "обёртки" для всех методов поиска, чтобы сохранять результаты для нашей статистики
+    // Г±Г¤ГҐГ«Г ГҐГ¬ "Г®ГЎВёГ°ГІГЄГЁ" Г¤Г«Гї ГўГ±ГҐГµ Г¬ГҐГІГ®Г¤Г®Гў ГЇГ®ГЁГ±ГЄГ , Г·ГІГ®ГЎГ» Г±Г®ГµГ°Г Г­ГїГІГј Г°ГҐГ§ГіГ«ГјГІГ ГІГ» Г¤Г«Гї Г­Г ГёГҐГ© Г±ГІГ ГІГЁГ±ГІГЁГЄГЁ
     template <typename DocumentPredicate>
     void AddFindRequest(const std::string& raw_query, DocumentPredicate document_predicate);
     void AddFindRequest(const std::string& raw_query, DocumentStatus status);

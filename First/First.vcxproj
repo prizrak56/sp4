@@ -19,7 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="document.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="read_input_functions.cpp" />
     <ClCompile Include="request_queue.cpp" />

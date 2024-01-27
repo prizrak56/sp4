@@ -4,8 +4,8 @@ RequestQueue::RequestQueue(const SearchServer& search_server) : search_request_(
 }
 
 template<typename DocumentPredicate>
-void RequestQueue::AddFindRequest(const std::string& raw_query, DocumentPredicate document_predicate){}
-void RequestQueue::AddFindRequest(const std::string& raw_query, DocumentStatus status){}
+void RequestQueue::AddFindRequest(const std::string& raw_query, DocumentPredicate document_predicate) {}
+void RequestQueue::AddFindRequest(const std::string& raw_query, DocumentStatus status) {}
 void RequestQueue::AddFindRequest(const std::string& raw_query)
 {
     if (requests_.empty() || requests_.size() < min_in_day_) {
@@ -38,7 +38,5 @@ void RequestQueue::AddFindRequest(const std::string& raw_query)
 
 int RequestQueue::GetNoResultRequests() const
 {
-	return empty_req_;
+    return empty_req_;
 }
-
-
