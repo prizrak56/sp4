@@ -1,6 +1,7 @@
 #pragma once
-
 #include <iostream>
+
+using namespace std::literals::string_literals;
 
 struct Document {
     Document() = default;
